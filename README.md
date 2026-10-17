@@ -47,13 +47,12 @@ Stop god mode with `HP-GodMode-OFF.bat`, or close its window / press Ctrl+C.
 
 | File | What it does |
 |---|---|
-| `Cheats-ON.bat` / `OFF` / `STATUS` | apply / revert / check Infinite SP + Unlimited Turns |
+| `Cheats-ON.bat` / `Cheats-OFF.bat` / `Cheats-STATUS.bat` | apply / revert / check Infinite SP + Unlimited Turns |
 | `shc_cheats.ps1` | the tool behind those three `.bat` files |
 | `HP-GodMode.bat` | find the live HP field and lock it |
 | `HP-FIND.bat` | locate the HP field, read-only, writes nothing |
 | `HP-GodMode-OFF.bat` | restore natural HP and clear the lock state |
 | `shc_godmode.ps1` | the god-mode tool itself |
-| `README.txt` | plain-text usage notes |
 | `SHC_cheats.ncl` | the codes in Artemis format — **reference only**, Artemis crashes |
 | `shc_hp_lock.ps1` | **legacy**, superseded by `shc_godmode.ps1` (see below) |
 
@@ -129,7 +128,7 @@ Other useful parameters: `-Value 5000` (lock value), `-IntervalMs 500` (slower, 
 
 ## Legacy: `shc_hp_lock.ps1`
 
-An earlier 3-step "classic trainer narrowing" tool: `find` → take a hit → `narrow` → `lock`. It works, but it needs you to manually read HP off screen and re-narrow each time.
+An earlier "classic trainer narrowing" tool: `find` → take a hit → `narrow` → `lock`. It works, but it needs you to manually read HP off screen and re-narrow each time.
 
 **Superseded by `shc_godmode.ps1`**, which auto-locates the field from the stat-block signature. Kept for reference.
 
