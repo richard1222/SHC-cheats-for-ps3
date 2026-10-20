@@ -1,5 +1,7 @@
 # SHC Cheats for PS3 — Super Heroine Chronicle (BLJS10244)
 
+**v0.9 (beta)** — released 2026-10-17. See [Version and changelog](#version-and-changelog).
+
 Working cheats for **Super Heroine Chronicle** on a **real PS3**. No Artemis, no emulator, no debug unit.
 
 | Cheat | Type | Verified on hardware |
@@ -180,6 +182,50 @@ powershell -NoProfile -ExecutionPolicy Bypass -File shc_cheats.ps1 -IP <your-ps3
 ```
 
 Find it on the console itself: XMB → Settings → Network Settings → Connection Status → IP Address, or check what `webMAN` reports on `http://<your-ps3-ip>/cpursx.ps3`.
+
+---
+
+## Version and changelog
+
+**Current: v0.9 (beta)** — 2026-10-17.
+
+This is the first tagged release. It is a **beta** on one specific point: Infinite SP,
+Unlimited Turns and the god-mode *finder* are hardware-verified, but god mode's
+**auto re-acquire path** is not yet re-verified (see [God mode status](#god-mode-status)).
+Everything else is stable.
+
+### Compatibility
+
+| | |
+|---|---|
+| Game | Super Heroine Chronicle, title id **BLJS10244** |
+| EBOOT version | **01.00** (the only version tested; other versions have different offsets) |
+| Console | any PS3 running **webMAN MOD** with its web server on port 80 — any CFW, DEX or CEX |
+| Not required | Artemis (it crashes), a debug unit, an emulator |
+| Host | Windows PC on the same LAN — the `.ps1` scripts use PowerShell |
+
+### What is verified on hardware
+
+| Feature | Status |
+|---|---|
+| Infinite SP | ✅ verified — ON → OFF → ON cycled in battle |
+| Unlimited Turns | ✅ verified — ON → OFF → ON cycled in battle |
+| God mode — finder | ✅ verified once — located the field, HP bar showed 9999 on the TV |
+| God mode — auto re-acquire | ⚠️ **not yet re-verified** — the battle ended before a second battle could be run end-to-end |
+
+### Changelog
+
+- **v0.9** (2026-10-17) — first tagged release.
+  - Infinite SP and Unlimited Turns, patched live via PS3MAPI.
+  - `shc_godmode.ps1`: auto-locates the HP field from a stat-block signature and locks it.
+  - `HP-FIND.bat`: read-only finder, safe to run.
+  - `shc_hp_lock.ps1`: kept as a legacy alternative (manual narrowing).
+  - README: documented the discovered PS3MAPI and memory-search gotchas.
+
+### Older tags
+
+The `release` tag is an earlier snapshot from the same day and is **superseded by v0.9**.
+It ships a README that lists a `README.txt` file which was never uploaded. Use v0.9 or later.
 
 ---
 
