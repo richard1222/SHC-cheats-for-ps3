@@ -33,12 +33,12 @@ A browser is enough. The `.ps1` scripts just wrap these calls.
 
 ## Quick start
 
-**One-time setup** — the scripts need your PS3's IP address. Open each `.ps1` in a text editor and set the `$IP` variable near the top (see [Changing the IP](#changing-the-ip)).
+**One-time setup** — the scripts need your PS3's IP address. Each `.ps1` ships with the placeholder `$IP = "PS3_IP_HERE"` and **refuses to run until you change it**; open the script in a text editor and set `$IP` near the top (see [Changing the IP](#changing-the-ip)).
 
 1. Turn on the PS3 and **start the game** (title screen or a battle).
 2. On the PC, double-click:
    - `Cheats-ON.bat` — Infinite SP + Unlimited Turns
-   - `HP-GodMode.bat` — god mode (leave the window open)
+   - `HP-GodMode.bat` — god mode (leave the window open). **God mode needs a live battle** — run it once you are in one, not at the title screen.
 3. Go back to the game. Cheats are active immediately.
 
 Stop god mode with `HP-GodMode-OFF.bat`, or close its window / press Ctrl+C.
@@ -104,7 +104,7 @@ So the tool:
 
 1. Sweeps the heap in 8 MB windows for that 8-byte signature.
 2. Adds `0x374` to get the live HP field.
-3. **Validates** the live struct (`live+0x04 == 159`, plausible HP) before writing anything.
+3. **Validates** the live struct (`live+0x04` equals the `$Sig2` signature word, default `159`, and HP is plausible) before writing anything.
 4. Locks HP with a ~300 ms `setmem` loop, since the game recomputes HP during battle.
 5. **Re-scans automatically** if the value stops sticking (i.e. the battle object moved).
 
@@ -124,7 +124,7 @@ The search signature starts with the character's **full (undamaged) HP**, which 
 powershell -ExecutionPolicy Bypass -File shc_godmode.ps1 -MaxHP 1428
 ```
 
-Other useful parameters: `-Value 5000` (lock value), `-IntervalMs 500` (slower, less network traffic).
+Other useful parameters: `-Value 5000` (lock value), `-IntervalMs 500` (slower, less network traffic), `-Mode status` (re-find the field and report HP/SP without writing).
 
 ---
 
@@ -175,7 +175,7 @@ These cost the most time. Written down so nobody repeats them.
 
 ## Changing the IP
 
-The `$IP` variable at the top of each `.ps1` holds your console's address — set it to whatever your PS3 is, or pass it per-run:
+Each `.ps1` has `[string] $IP = "PS3_IP_HERE"` at the top. Replace that placeholder with your console's address, or pass it per-run (which also satisfies the guard):
 
 ```
 powershell -NoProfile -ExecutionPolicy Bypass -File shc_cheats.ps1 -IP <your-ps3-ip>
