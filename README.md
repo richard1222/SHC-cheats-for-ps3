@@ -1,16 +1,37 @@
 # SHC Cheats for PS3 — Super Heroine Chronicle (BLJS10244)
 
+![Platform](https://img.shields.io/badge/Platform-PS3-blue)
+![Region](https://img.shields.io/badge/Region-Japan-green)
+![Title%20ID](https://img.shields.io/badge/Title%20ID-BLJS10244-orange)
+![Version](https://img.shields.io/badge/Version-01.00-yellow)
+![Status](https://img.shields.io/badge/Status-Beta-yellow)
+
 **v0.9 (beta)** — released 2026-10-17. See [Version and changelog](#version-and-changelog).
 
 Working cheats for **Super Heroine Chronicle** on a **real PS3**. No Artemis, no emulator, no debug unit.
 
 | Cheat | Type | Verified on hardware |
 |---|---|---|
-| Infinite SP | EBOOT code patch | ✅ ON → OFF → ON cycled in battle |
-| Unlimited Turns | EBOOT code patch | ✅ ON → OFF → ON cycled in battle |
-| God mode (HP lock) | Live RAM lock | ✅ HP showed 9999 on the TV (see [status](#god-mode-status)) |
+| Infinite SP | EBOOT code patch | ✓ ON → OFF → ON cycled in battle |
+| Unlimited Turns | EBOOT code patch | ✓ ON → OFF → ON cycled in battle |
+| God mode (HP lock) | Live RAM lock | ✓ HP showed 9999 on the TV (see [status](#god-mode-status)) |
 
 Everything runs from a PC on the same LAN, talking to **webMAN MOD's PS3MAPI** HTTP endpoints.
+
+---
+
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Files](#files)
+- [The Codes](#the-codes)
+- [God Mode](#god-mode)
+- [Legacy: shc_hp_lock.ps1](#legacy-shc_hp_lockps1)
+- [Discovered Facts and Gotchas](#discovered-facts-and-gotchas)
+- [Safety](#safety)
+- [Changing the IP](#changing-the-ip)
+- [Version and Changelog](#version-and-changelog)
+- [Credits](#credits)
 
 ---
 
@@ -33,7 +54,7 @@ A browser is enough. The `.ps1` scripts just wrap these calls.
 
 ## Quick start
 
-**One-time setup** — the scripts need your PS3's IP address. Each `.ps1` ships with the placeholder `$IP = "PS3_IP_HERE"` and **refuses to run until you change it**; open the script in a text editor and set `$IP` near the top (see [Changing the IP](#changing-the-ip)).
+**One-time setup** — the scripts need your PS3's IP address. Open each `.ps1` in a text editor and set the `$IP` variable near the top (see [Changing the IP](#changing-the-ip)).
 
 1. Turn on the PS3 and **start the game** (title screen or a battle).
 2. On the PC, double-click:
@@ -49,7 +70,7 @@ Stop god mode with `HP-GodMode-OFF.bat`, or close its window / press Ctrl+C.
 
 | File | What it does |
 |---|---|
-| `Cheats-ON.bat` / `Cheats-OFF.bat` / `Cheats-STATUS.bat` | apply / revert / check Infinite SP + Unlimited Turns |
+| `Cheats-ON.bat` / `OFF` / `STATUS` | apply / revert / check Infinite SP + Unlimited Turns |
 | `shc_cheats.ps1` | the tool behind those three `.bat` files |
 | `HP-GodMode.bat` | find the live HP field and lock it |
 | `HP-FIND.bat` | locate the HP field, read-only, writes nothing |
@@ -104,7 +125,7 @@ So the tool:
 
 1. Sweeps the heap in 8 MB windows for that 8-byte signature.
 2. Adds `0x374` to get the live HP field.
-3. **Validates** the live struct (`live+0x04` equals the `$Sig2` signature word, default `159`, and HP is plausible) before writing anything.
+3. **Validates** the live struct (`live+0x04 == 159`, plausible HP) before writing anything.
 4. Locks HP with a ~300 ms `setmem` loop, since the game recomputes HP during battle.
 5. **Re-scans automatically** if the value stops sticking (i.e. the battle object moved).
 
@@ -120,17 +141,17 @@ What is **not yet re-verified** is the auto re-acquire path — the battle ended
 
 The search signature starts with the character's **full (undamaged) HP**, which changes with level and equipment. If she's not level 35, read her max HP off the bar and pass it:
 
-```
+```powershell
 powershell -ExecutionPolicy Bypass -File shc_godmode.ps1 -MaxHP 1428
 ```
 
-Other useful parameters: `-Value 5000` (lock value), `-IntervalMs 500` (slower, less network traffic), `-Mode status` (re-find the field and report HP/SP without writing).
+Other useful parameters: `-Value 5000` (lock value), `-IntervalMs 500` (slower, less network traffic).
 
 ---
 
 ## Legacy: `shc_hp_lock.ps1`
 
-An earlier "classic trainer narrowing" tool: `find` → take a hit → `narrow` → `lock`. It works, but it needs you to manually read HP off screen and re-narrow each time.
+An earlier 3-step "classic trainer narrowing" tool: `find` → take a hit → `narrow` → `lock`. It works, but it needs you to manually read HP off screen and re-narrow each time.
 
 **Superseded by `shc_godmode.ps1`**, which auto-locates the field from the stat-block signature. Kept for reference.
 
@@ -175,13 +196,41 @@ These cost the most time. Written down so nobody repeats them.
 
 ## Changing the IP
 
-Each `.ps1` has `[string] $IP = "PS3_IP_HERE"` at the top. Replace that placeholder with your console's address, or pass it per-run (which also satisfies the guard):
+The `$IP` variable at the top of each `.ps1` holds your console's address — set it to whatever your PS3 is, or pass it per-run:
 
-```
+```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File shc_cheats.ps1 -IP <your-ps3-ip>
 ```
 
 Find it on the console itself: XMB → Settings → Network Settings → Connection Status → IP Address, or check what `webMAN` reports on `http://<your-ps3-ip>/cpursx.ps3`.
+
+---
+
+## Progress Chart
+
+```
+Task Progress
+─────────────────────────────────────────────────────
+
+Cheat Research         ████████████████████ 100% ✅
+Infinite SP            ████████████████████ 100% ✅ (verified)
+Unlimited Turns        ████████████████████ 100% ✅ (verified)
+God Mode Finder        ████████████████████ 100% ✅ (verified once)
+God Mode Auto-Reacquire████░░░░░░░░░░░░░░░░  20% 🔄 (not re-verified)
+Safety Documentation   ████████████████████ 100% ✅
+
+Legend: ✅ Done  🔄 In Progress  ⏳ Pending
+```
+
+---
+
+## Resources
+
+- [SHC English Patch](https://github.com/deucebucket/sabers-shc-english-patch) - English translation
+- [PS3MAPI Documentation](https://github.com/bucanero/ps3mapi) - Memory access API
+- [webMAN MOD](https://github.com/aldostools/webMAN-MOD) - Console management
+- [NFS Carbon Cheats](https://github.com/richard1222/NFS-carbon-cheat-codes-for-ps3) - Similar project
+- [SpongeBob BBFB PS2 Cheats](https://github.com/richard1222/Spongebob-SquarePants-BBFB-PS2-Cheats-Codes) - PS2 cheat research
 
 ---
 
@@ -208,9 +257,9 @@ Everything else is stable.
 
 | Feature | Status |
 |---|---|
-| Infinite SP | ✅ verified — ON → OFF → ON cycled in battle |
-| Unlimited Turns | ✅ verified — ON → OFF → ON cycled in battle |
-| God mode — finder | ✅ verified once — located the field, HP bar showed 9999 on the TV |
+| Infinite SP | ✓ verified — ON → OFF → ON cycled in battle |
+| Unlimited Turns | ✓ verified — ON → OFF → ON cycled in battle |
+| God mode — finder | ✓ verified once — located the field, HP bar showed 9999 on the TV |
 | God mode — auto re-acquire | ⚠️ **not yet re-verified** — the battle ended before a second battle could be run end-to-end |
 
 ### Changelog
@@ -234,3 +283,10 @@ It ships a README that lists a `README.txt` file which was never uploaded. Use v
 English patch: [deucebucket/sabers-shc-english-patch](https://github.com/deucebucket/sabers-shc-english-patch).
 
 Findings also posted to [issue #11](https://github.com/deucebucket/sabers-shc-english-patch/issues/11#issuecomment-6240717246).
+
+---
+
+## License
+
+Research documentation only. No game data distributed. Legitimate copy required.
+No console IDs, LAN IPs, or local paths committed.
